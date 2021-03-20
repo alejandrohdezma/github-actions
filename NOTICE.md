@@ -1,0 +1,9 @@
+[comment]: <> (Don't edit this file!)
+[comment]: <> (It is automatically updated after every release of https://github.com/alejandrohdezma/sbt-ci)
+[comment]: <> (If you want to suggest a change, please open a PR or issue in that repository)
+
+github-actions
+
+Copyright (c)  com.alejandrohdezma. All rights reserved.
+
+Licensed under . See [LICENSE](LICENSE.md) for terms.

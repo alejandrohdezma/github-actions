@@ -1,0 +1,28 @@
+<a style="float:right" href="https://github.com/alejandrohdezma/github-actions/blob/main/scaladoc-root.txt">edit this text on github</a>
+
+<h2>GitHub Actions Scala DSL</h2>
+
+This is the API documentation for the <a href="http://github.com/alejandrohdezma/github-actions" target="_top">alejandrohdezma/github-actions</a> library.
+
+It can be used to create GitHub Actions workflows directly from Scala, using the companion SBT plugin to automatically generate and keep them up-to-date as YAML files.
+
+{{{
+workflow
+  .name("Scala CI")
+  .on(push.branches(matching("main")))
+  .on(pullRequest.branches(matching("main")))
+  .job("build") {
+    _.runsOn(`ubuntu-latest`)
+      .steps(
+        uses("actions/checkout@v2"),
+        uses("actions/setup-java@v2")
+          .name("Set up JDK 11")
+          .withInput("java-version", "11")
+          .withInput("distribution", "adopt"),
+        run("sbt test")
+          .name("Run tests")
+      )
+  }
+}}}
+
+<a href="com/alejandrohdezma/github/actions/index.html">To the main package...</a>

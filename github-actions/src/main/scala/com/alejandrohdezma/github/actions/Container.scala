@@ -1,0 +1,95 @@
+/*
+ * Copyright 2021 Alejandro Hernández <https://github.com/alejandrohdezma>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.alejandrohdezma.github.actions
+
+import scala.collection.immutable.ListMap
+
+import com.alejandrohdezma.github.actions.yaml._
+
+/**
+ * A container to run any steps in a job that don't already specify a container. If you have steps that use both script
+ * and container actions, the container actions will run as sibling containers on the same network with the same volume
+ * mounts.
+ *
+ * If you do not set a container, all steps will run directly on the host specified by runs-on unless a step refers to
+ * an action configured to run in a container
+ *
+ * @param image the Docker image to use as the container to run the action. The value can be the Docker Hub image name
+ *   or a registry name
+ * @param credentials if the image's container registry requires authentication to pull the image, you can use
+ *   credentials to set a map of the username and password. The credentials are the same values that you would provide
+ *   to the `docker login` command
+ * @param env sets an array of environment variables in the container
+ * @param ports sets an array of ports to expose on the container
+ * @param volumes sets an array of volumes for the container to use. You can use volumes to share data between services
+ *   or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the
+ *   host. To specify a volume, you specify the source and destination path: <source>:<destinationPath>. The <source> is
+ *   a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container
+ */
+final case class Container(
+    image: NotEmptyString,
+    credentials: Option[Container.Credentials] = None,
+    env: Map[NotEmptyString, NotEmptyString] = ListMap(),
+    ports: List[PortNumber] = Nil,
+    volumes: List[Volume] = Nil,
+    options: Option[NotEmptyString] = None
+) {
+
+  def credentials(username: NotEmptyString, password: NotEmptyString): Container =
+    copy(credentials = Some(Container.Credentials(username, password)))
+
+  def credentials(username: NotEmptyString, password: Expression): Container =
+    copy(credentials = Some(Container.Credentials(username, password.show())))
+
+  def env(key: NotEmptyString, value: NotEmptyString): Container = copy(env = env + ((key, value)))
+
+  def env(key: NotEmptyString, value: Expression): Container = copy(env = env + ((key, value.show())))
+
+  def exposePort(port: PortNumber): Container = exposePorts(port)
+
+  def exposePorts(exposedPorts: PortNumber*): Container = copy(ports = ports ++ exposedPorts)
+
+  def exposeVolume(volume: Volume): Container = exposeVolumes(volume)
+
+  def exposeVolumes(exposedVolumes: Volume*): Container = copy(volumes = volumes ++ exposedVolumes)
+
+  def options(options: NotEmptyString): Container = copy(options = Some(options))
+
+}
+
+object Container {
+
+  final case class Credentials(username: NotEmptyString, password: NotEmptyString)
+
+  object Credentials {
+
+    implicit val CredentialsEncoder: Encoder[Credentials] = credentials =>
+      Yaml.obj("username" := credentials.username, "password" := credentials.password)
+
+  }
+
+  implicit val ContainerEncoder: Encoder[Container] = container =>
+    Yaml.obj(
+      "image"       := container.image,
+      "credentials" := container.credentials,
+      "env"         := (if (container.env.isEmpty) Yaml.Null else container.env.map(t => t._1.value -> t._2).asYaml),
+      "ports"       := (if (container.ports.isEmpty) Yaml.Null else container.ports.asYaml),
+      "volumes"     := (if (container.volumes.isEmpty) Yaml.Null else container.volumes.asYaml),
+      "options"     := container.options
+    )
+
+}

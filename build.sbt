@@ -1,6 +1,6 @@
 ThisBuild / scalaVersion        := "2.12.13"
 ThisBuild / organization        := "com.alejandrohdezma"
-ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "0.7.22" % Test
+ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "0.7.23" % Test
 ThisBuild / testFrameworks      += new TestFramework("munit.Framework")
 ThisBuild / testOptions in Test += Tests.Argument(new TestFramework("munit.Framework"), "+l", "+n")
 ThisBuild / libraryDependencies += compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)

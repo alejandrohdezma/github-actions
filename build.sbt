@@ -22,6 +22,6 @@ lazy val `github-actions` = project
       "scaladoc-root.txt"
     )
   )
-  .settings(libraryDependencies += "org.scalameta" %% "munit" % "0.7.23" % Test)
+  .settings(libraryDependencies += "org.scalameta" %% "munit" % "0.7.25" % Test)
   .settings(libraryDependencies += "com.softwaremill.quicklens" %% "quicklens" % "1.6.1" % Test)
   .settings(libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value)

@@ -2,7 +2,7 @@ ThisBuild / scalaVersion         := "2.12.13"
 ThisBuild / organization         := "com.alejandrohdezma"
 ThisBuild / testOptions in Test  += Tests.Argument(new TestFramework("munit.Framework"), "+l", "+n")
 ThisBuild / libraryDependencies  += compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
-ThisBuild / libraryDependencies  += compilerPlugin("org.typelevel" % "kind-projector" % "0.12.0" cross CrossVersion.full)
+ThisBuild / libraryDependencies  += compilerPlugin("org.typelevel" % "kind-projector" % "0.13.0" cross CrossVersion.full)
 ThisBuild / scalafixDependencies += "com.github.tanishiking" %% "scalafix-check-scaladoc" % "0.0.2"
 
 addCommandAlias("ci-test", "fix --check; mdoc; +test")
@@ -23,5 +23,5 @@ lazy val `github-actions` = project
     )
   )
   .settings(libraryDependencies += "org.scalameta" %% "munit" % "0.7.26" % Test)
-  .settings(libraryDependencies += "com.softwaremill.quicklens" %% "quicklens" % "1.7.1" % Test)
+  .settings(libraryDependencies += "com.softwaremill.quicklens" %% "quicklens" % "1.7.3" % Test)
   .settings(libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value)
